@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les 1, Het huis</title>
+  <!-- Import a nice Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --secondary-color: #50c878;
+      --bg-color: #f0f4f8;
+      --card-width: 320px;
+      --card-height: 220px;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .container {
+      text-align: center;
+    }
+    
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 700;
+    }
+    
+    .flashcard {
+      width: var(--card-width);
+      height: var(--card-height);
+      margin: 0 auto;
+      perspective: 1500px;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    
+    .card-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+    
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+      padding: 20px;
+      color: #fff;
+      font-size: 2rem;
+      text-align: center;
+    }
+    
+    .card-front {
+      background: var(--primary-color);
+    }
+    
+    .card-back {
+      background: var(--secondary-color);
+      transform: rotateY(180deg);
+    }
+    
+    button {
+      margin-top: 30px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 30px;
+      background: var(--primary-color);
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    
+    button:hover {
+      background: #357ab8;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="flashcard" class="flashcard">
+      <div class="card-inner">
+        <div class="card-face card-front" id="card-front"></div>
+        <div class="card-face card-back" id="card-back"></div>
+      </div>
+    </div>
+    <button id="next-btn">Next Card</button>
+  </div>
+
+  <script>
+    const flashcards = [
+      { front: "het huis", back: "the house" },
+      { front: "de deur", back: "the door" },
+      { front: "het raam", back: "the window" },
+      { front: "de woonkamer", back: "the living room" },
+      { front: "de slaapkamer", back: "the bedroom" },
+      { front: "de badkamer", back: "the bathroom" },
+      { front: "de wc", back: "the toilet" },
+      { front: "de keuken", back: "the kitchen" },
+      { front: "de gang", back: "the hallway" },
+      { front: "het dak", back: "the roof" },
+      { front: "de muur", back: "the wall" },
+      { front: "de tuin", back: "the garden" },
+      { front: "de trap", back: "the stairs" },
+      { front: "de lift", back: "the elevator" },
+      { front: "de wand", back: "the wall" },
+      { front: "het plafond", back: "the ceiling" },
+      { front: "de voordeur", back: "the front door" },
+      { front: "de achterdeur", back: "the back door" },
+      { front: "de ingang", back: "the entrance" },
+      { front: "de studeerkamer", back: "the study room" },
+      { front: "de hal", back: "the hall" },
+      { front: "de kapstok", back: "the coat rack" },
+      { front: "het aanrecht", back: "the countertop" },
+      { front: "de meubels", back: "the furniture" },
+      { front: "het bad", back: "the bath" },
+      { front: "de douche", back: "the shower" },
+      { front: "het toilet", back: "the toilet" },
+      { front: "de uitgang", back: "the exit" },
+      { front: "de woning", back: "the residence" },
+      { front: "het gebouw", back: "the building" },
+      { front: "het slot", back: "the lock/castle" },
+      { front: "de brievenbus", back: "the mailbox" },
+      { front: "de drempel", back: "the threshold" },
+      { front: "het hek", back: "the gate/fence" },
+      { front: "de hut", back: "the hut" },
+      { front: "de mat", back: "the mat" },
+      { front: "het kussen", back: "the pillow" },
+      { front: "de deken", back: "the blanket" },
+      { front: "de bank", back: "the couch/bank" },
+      { front: "het huishouden", back: "the household" },
+      { front: "de huisvrouw", back: "the housewife" },
+      { front: "het stof", back: "the dust" },
+      { front: "de stofzuiger", back: "the vacuum cleaner" },
+      { front: "de emmer", back: "the bucket" },
+      { front: "de stoel", back: "the chair" },
+      { front: "de tafel", back: "the table" },
+      { front: "de lamp", back: "the lamp" },
+      { front: "de kraan", back: "the faucet" },
+      { front: "de zolder", back: "the attic" },
+      { front: "de verdieping", back: "the floor (level)" },
+      { front: "de kelder", back: "the basement" },
+      { front: "de sleutel", back: "the key" },
+      { front: "de spiegel", back: "the mirror" },
+      { front: "de handdoek", back: "the towel" },
+      { front: "de vaas", back: "the vase" },
+      { front: "het gordijn", back: "the curtain" },
+      { front: "het bed", back: "the bed" },
+      { front: "de kast", back: "the cupboard/wardrobe" },
+      { front: "de la", back: "the drawer" },
+      { front: "de verwarming", back: "the heating" },
+      { front: "de tv", back: "the TV" },
+      { front: "de radio", back: "the radio" },
+      { front: "de vloer", back: "the floor" },
+      { front: "bouwen", back: "to build" },
+      { front: "maken", back: "to make" },
+      { front: "gebruiken", back: "to use" },
+      { front: "wassen", back: "to wash" },
+      { front: "schoonmaken", back: "to clean" },
+      { front: "aanbellen", back: "to ring the bell" },
+      { front: "wonen", back: "to live" },
+      { front: "slapen", back: "to sleep" },
+      { front: "vuil", back: "dirty" },
+      { front: "groot", back: "big" },
+      { front: "klein", back: "small" },
+      { front: "lang", back: "long" },
+      { front: "kort", back: "short" },
+      { front: "handig", back: "handy" },
+      { front: "hoog", back: "high" },
+      { front: "laag", back: "low" },
+      { front: "beneden", back: "downstairs" },
+      { front: "boven", back: "upstairs" },
+      { front: "eenvoudig", back: "simple" },
+      { front: "comfortabel", back: "comfortable" },
+      { front: "gezellig", back: "cozy" },
+      { front: "misschien", back: "maybe" }
+    ];
+
+    function getRandomCard() {
+      const randomIndex = Math.floor(Math.random() * flashcards.length);
+      return flashcards[randomIndex];
+    }
+    
+    function showRandomCard() {
+      const card = getRandomCard();
+      document.getElementById("card-front").textContent = card.front;
+      document.getElementById("card-back").textContent = card.back;
+      document.querySelector(".card-inner").classList.remove("is-flipped");
+    }
+    
+    document.getElementById("next-btn").addEventListener("click", showRandomCard);
+    
+    document.getElementById("flashcard").addEventListener("click", function() {
+      document.querySelector(".card-inner").classList.toggle("is-flipped");
+    });
+    
+    // Display an initial random card on page load
+    showRandomCard();
+  </script>
+</body>
+</html>
